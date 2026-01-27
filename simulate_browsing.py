@@ -6,7 +6,7 @@ import time
 def generate_evidence():
     print("[!] Starting Browser Simulation...")
     options = Options()
-    options.headless = True
+    options.headless = True  
     driver = webdriver.Firefox(options=options)
     
     urls = [
