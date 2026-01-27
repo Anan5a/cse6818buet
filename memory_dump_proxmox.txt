@@ -1,0 +1,7 @@
+# Get VM ID (e.g., 101)
+ 
+qm monitor 101
+
+# Inside the monitor prompt:
+
+pmemsave 0 2147483648 /tmp/suspect_ram.raw
