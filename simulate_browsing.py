@@ -3,7 +3,7 @@ from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 import time
 
-def generate_evidence():
+def simulate_browsing():
     print("[!] Starting Browser Simulation...")
     options = Options()
     options.headless = True  
@@ -12,7 +12,9 @@ def generate_evidence():
     urls = [
         "https://github.com/sqlmapproject/sqlmap",
         "https://www.example.com/",
-        "https://google.com/"
+        "https://google.com/",
+        "https://sayem.pro"
+
     ]
     
     for url in urls:
@@ -24,4 +26,4 @@ def generate_evidence():
     print("[+] Evidence generated. Keep the VM running for acquisition.")
 
 if __name__ == "__main__":
-    generate_evidence()
+    simulate_browsing()

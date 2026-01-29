@@ -1,0 +1,45 @@
+FUNCTION GenerateForensicReport(findings_list, file_hash)
+START
+AGGREGATE the findings and calculate\
+    the Frequency (Hit Count) for each unique artifact.
+SORT the artifacts by Hit Count in descending order.
+CREATE a new CSV report in the /reports \
+    directory using the current system time.
+WRITE the Evidence Hash to the file header for the Chain of Custody.
+FOR EACH unique artifact:
+    EXPORT (Hits, Timestamp, Browser, Incognito, URL) to the CSV.
+END
+
+
+------------
+
+
+
+FUNCTION AnalyzeMemory(dump_file_path)
+START
+VALIDATE that dump_file_path exists on the host.
+OPEN the file in binary mode.
+MAP the entire file into a virtual memory address space (mmap) for high-speed access.
+CALCULATE the SHA256 hash of the mapped data to ensure evidence integrity.
+FIND all occurrences of the URL Pattern using a regular expression.
+    FOR EACH match discovered:
+    CLEAN and DECODE the URL string.
+    FILTER out "noise" (e.g., ad-trackers, stylesheets, scripts).
+    DEFINE a 1KB Context Window immediately preceding the URL.
+    IF the context window contains > 90% null bytes (Zero-Check):
+        SKIP (assumed to be fragmented or orphaned data).
+    SCAN the context window for Browser Signatures (Firefox, Chrome, Brave).
+    IF no browser signature is found:
+        SKIP (cannot attribute the URL to a specific application).
+    CHECK for Incognito Flags (--incognito, --private-window) in the context window.
+    PERFORM binary carving for Timestamps:
+        Iterate backwards 64 bytes in the context window.
+        Attempt to unpack bytes as 8-byte PRTime (Firefox) or 4-byte Unix Epoch (Chrome).
+        IF the resulting date is within the Valid Forensic Range (2023–2030):
+            SAVE the timestamp and stop searching.
+ADD the (Timestamp, Browser, Incognito Status, URL) to the Findings List.
+RETURN Findings List and File Hash.
+END
+
+----------------
+
