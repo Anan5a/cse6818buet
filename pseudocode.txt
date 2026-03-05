@@ -1,3 +1,57 @@
+FUNCTION calculate_entropy(data_block):
+    IF data_block is empty THEN RETURN 0
+    
+    SET frequency_map = count occurrences of each byte (0-255)
+    SET entropy = 0
+    
+    FOR each byte count in frequency_map:
+        SET probability = byte_count / total_data_length
+        IF probability > 0:
+            entropy = entropy - (probability * log2(probability))
+            
+    RETURN entropy
+
+--------------
+
+FUNCTION custom_scan(memory_dump_file):
+    IF file does not exist THEN EXIT with error
+    MAP memory_dump_file into virtual memory (mmap) for high-speed access
+    GENERATE SHA256 hash of the memory dump for chain of custody
+    FOR EACH match of URL_PATTERN in memory:
+        EXTRACT matched_url string
+        IF length < 15 OR ends with [.js, .css, .png, .jpg] THEN CONTINUE
+        CAPTURE 256 bytes BEFORE the URL (immediate context)
+        CAPTURE 4KB around the URL (wide context)
+        SET confidence_score = 0
+        SET is_incognito = False
+        IF context contains HTTP markers (GET, POST, Host, etc) THEN
+            score = score + 50
+        IF wide_context contains browser signatures (Chrome, Firefox, Brave) THEN
+            score = score + 30
+        IF wide_context contains incognito flags (--incognito) THEN
+            score = score + 10
+            is_incognito = True
+        IF entropy of immediate context is between 3.5 and 5.5 THEN
+            score = score + 10
+        IF confidence_score >= 20:
+            SCAN context backwards for 8-byte integers (Little Endian)
+            IF integer matches a valid Unix/PRTime (2023-2030) THEN
+                CONVERT integer TO human-readable timestamp
+            ADD (timestamp, browser, incognito, url, score) TO findings_list
+            
+    RETURN findings_list, sha256_hash
+
+
+
+
+
+
+
+
+
+
+-------------
+
 FUNCTION GenerateForensicReport(findings_list, file_hash)
 START
 AGGREGATE the findings and calculate\

@@ -7,3 +7,4 @@ __pycache__/
 .env
 dumps/
 reports/
+vol-symbols/**
